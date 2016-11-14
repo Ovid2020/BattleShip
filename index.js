@@ -2,8 +2,7 @@
 //process.stdin.resume();
 // process.stdin.on('data', function(data) { process.stdout.write(data) });
 
-
-// 1. User board creation: assign ships. 
+// 1. Set up steps -- consider conversion to OOP design
 
 const ships = {
   carrier: 5, 
@@ -22,3 +21,10 @@ const createBlankBoard = function(){
 };
 
 console.log(createBlankBoard());
+
+
+// 2. User board customizatoin: both players assign ships. 
+
+
+
+// 3. Gameplay functions: Hit, Miss, Already Taken, Sunk, Win
