@@ -8,7 +8,24 @@ const Ship = function(name, length) {
   this.name = name;
   this.symbol = name.slice(0, 2);
   this.length = length;
-  this.isPlaced = false;
+  this.coordinates = {};
+  this.hits = 0;
+  this.status = 'unplaced';
+};
+
+Ship.prototype.assignCoordinates = function(coordinates) {
+  this.coordinates = coordinates;
+}
+
+Ship.prototype.recordHit = function() {
+  this.hits++;
+  if (this.hits === this.length) {
+    this.updateStatus('dead');
+  }
+};
+
+Ship.prototype.updateStatus = function(newStatus) {
+  this.status = newStatus;
 };
 
 const Ships = function() {
@@ -23,15 +40,33 @@ const Ships = function() {
 const Player = function(name) {
   this.name = name || 'Anonymous',
   this.ships = new Ships();
-  this.board = null;
+  this.privateBoard = null;
+  this.publicBoard = null;
 };
 
-Player.prototype.createBlankBoard = function(){
-  var board = [];
-  for (var i = 0; i < 10; i++) {
-    board.push(new Array(10));
+Player.prototype.createBlankBoards = function(){
+  var board = {};
+  for (var i = 1; i <= 10; i++) {
+    for (var j = 1; j <= 10; j++) {
+      board[i + "," + j] = 'o';
+    }
   }
-  this.board = board;
+  this.privateBoard = Object.assign({}, board);
+  this.publicBoard = Object.assign({}, board);
+};
+
+Player.prototype.printBoard = function(){
+  var printString = '\n' + this.name + '\'s board: \n';
+  var counter = 0;
+  for (var key in this.publicBoard) {
+    printString += this.publicBoard[key] + ' ';
+    counter++;
+    if (counter === 10) {
+      printString += '\n';
+      counter = 0;
+    }
+  }
+  return printString;
 };
 
 
@@ -43,5 +78,5 @@ Player.prototype.createBlankBoard = function(){
 // // 3. Gameplay functions: Hit, Miss, Already Taken, Sunk, Win
 
 var vin = new Player('Vincent');
-vin.createBlankBoard();
-console.log(vin);
+vin.createBlankBoards();
+console.log(vin.printBoard());
