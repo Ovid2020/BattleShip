@@ -79,11 +79,11 @@ Player.prototype.createBlankBoards = function(){
   this.publicBoard = Object.assign({}, board);
 };
 
-Player.prototype.printBoard = function(){
-  var printString = '\n' + this.name + '\'s board: \n';
+Player.prototype.printBoard = function(board) {
+  var printString = '\n';
   var counter = 0;
-  for (var key in this.publicBoard) {
-    printString += this.publicBoard[key] + ' ';
+  for (var key in board) {
+    printString += board[key] + ' ';
     counter++;
     if (counter === 10) {
       printString += '\n';
@@ -93,7 +93,62 @@ Player.prototype.printBoard = function(){
   return printString;
 };
 
+Player.prototype.placeShip = function(shipName, placementData) {
+  placementData = placementData.split(' ');
+  var dir = placementData[1];
+  var shipLen = this.unPlacedShips[shipName].length;
+  var shipSymbol = this.unPlacedShips[shipName].symbol;
+  var coords = placementData[0].split(',');
+  var row = coords[0];
+  var col = coords[1];
 
+
+  // function movePlacement(currentSpot, rowOrCol, direction){
+  //   for (var i = 0; i < shipLen; i++) {
+  //     currentSpot = shipSymbol;
+  //     rowOrCol += direction;
+  //   }
+  // };
+
+  if (dir === 'left') {
+    for (var i = 0; i < shipLen; i++) {
+      this.privateBoard[coords[0], col] = shipSymbol;
+      col--;
+    }
+  }
+
+  if (dir === 'right') {
+    for (var i = 0; i < shipLen; i++) {
+      this.privateBoard[coords[0], col] = shipSymbol;
+      col++;
+    }
+  }
+
+  if (dir === 'up') {
+    for (var i = 0; i < shipLen; i++) {
+      this.privateBoard[row, coords[1]] = shipSymbol;
+      row--;
+    }
+  } 
+
+  if (dir === 'down') {
+    for (var i = 0; i < shipLen; i++) {
+      this.privateBoard[row, coords[1]] = shipSymbol;
+      row++;
+    }
+  }
+};
+
+function isValidPlacement(placementData) {
+  return true;
+};
+
+function printBoardWithHeader(player) {
+  return 'Your remaining ships to place are:\n ' + player.unPlacedShips.printShipList() + '\n' + 
+  'And your current board is: ' + player.printBoard(player.privateBoard) + '\n' + 
+  'Note: o indicates open spots, letters indicate a ship is placed there.\n' + 
+  'First, type in the  ship\'s name that you would like to place, then hit enter.\n';
+};
 
 // // 2. User board customizatoin: both players assign ships. 
 // process.stdout.write("Player One: Assign your ships.");
@@ -124,7 +179,7 @@ process.stdin.on('data', function(data) {
                             process.stdout.write('\n Player two, enter your name: ') )
                          : (playerTwo.setName(data), 
                             process.stdout.write('\n ' + playerOne.getName() + ', begin your ship placements. ' + 
-                            'Your options are:\n ' + playerOne.unPlacedShips.printShipList()));
+                            printBoardWithHeader(playerOne)));
 
   } 
 
@@ -134,6 +189,25 @@ process.stdin.on('data', function(data) {
     var privateBoard = player.privateBoard;
     var shipList = player.unPlacedShips;
     var placedShipList = player.placedShips;
+    var shipToPlace;
+    var shipCoordinateStart;
+    var shipToMove;
+
+    if (shipList[data]) {
+      shipToPlace = data;
+      process.stdout.write('\n Where would you like to place your ' + data + '? ' + 
+                           'Enter a coordinate pair in the format row,column direction. For example, 1,1 down ' +
+                           'indicates you wish to begin your placement at row 1, column 1, and you want the ship ' + 
+                           ' to go vertically downward. Valid directions are left, right, up, and down.');  
+    }
+
+    if (isValidPlacement(data)) {
+      player.placeShip(shipToPlace, data);
+      placedShipList[shipToPlace] = shipList[shipToPlace];
+      delete shipList[shipToPlace];
+      process.stdout.write('\n Ok, your ' + shipToPlace + ' is now placed. ' + printBoardWithHeader(playerOne));  
+      shipToPlace = null;
+    }
 
     if (!shipList[data]) {
       process.stdout.write('\n That is an invalid ship name. Please select your ship from the following options:\n ' 
@@ -141,6 +215,7 @@ process.stdin.on('data', function(data) {
     }
 
     if (placedShipList[data]){
+      shipToMove = data;
       process.stdout.write('\n You have already placed this ship. Would you like to move it? Type move if so.') 
     }
 
@@ -149,11 +224,12 @@ process.stdin.on('data', function(data) {
     }
 
     if (shipList.numOfShips === 0) {
-      player === playerOne ? (process.stdout.write('\n ' + playerTwo.getName() ', begin placing ships: \n'))
+      player === playerOne ? (process.stdout.write('\n ' + playerTwo.getName() + ', begin placing ships: \n' 
+                            + printBoardWithHeader(playerTwo)))
                            : (process.stdout.write('\nShip placement is over! Now, the game begins.\n' +
                               playerOne.getName() + ' has the first move. Make an attack by entering a coordinate ' +
                               'pair in the following format: 1,1 . This example attachs the position at row 1, column ' + 
-                              'one.\n'
+                              'one.\n'));
 
     }
 
