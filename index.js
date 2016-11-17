@@ -131,10 +131,6 @@ Player.prototype.placeShip = function(shipName, placementData) {
         return false;
       }
     }
-    if (row < 1 || row > 10 || col < 1 || col > 10) {
-      process.stdout.write('\nThis placement goes out of bounds. Please enter a new placement.\n');
-      return false;
-    }
   }
 
   return true;
@@ -142,20 +138,25 @@ Player.prototype.placeShip = function(shipName, placementData) {
   function movePlacement(board, coords, rowOrCol, direction) {
     if (board[coords] !== 'oo') {
       process.stdout.write('\nThis placement overlaps with another of your ships. Please enter a new placement.\n');
-      resetPlacements();
+      resetPlacements(board);
       return false;
     } else {
       placedCoords.push(coords);
       board[coords] = shipSymbol;
       rowOrCol === 'row' ? row += direction : col += direction;
+      if (row < 1 || row > 10 || col < 1 || col > 10) {
+        process.stdout.write('\nThis placement goes out of bounds. Please enter a new placement.\n');
+        resetPlacements(board);
+        return false;
+      }
       return true; 
     }
   }
 
-  function resetPlacements() {
-    placedCoords.forEach(function(coord) {
-      coord = 'oo';
-    });
+  function resetPlacements(board) {
+    for (var i = 0; i < placedCoords.length; i++) {
+      board[placedCoords[i]] = 'oo';
+    }
   }
 };
 
@@ -168,7 +169,7 @@ function isValidPlacementData(placementData) {
     return false;
   }  
   if (parseInt(coords[0]) > 10 || parseInt(coords[0]) < 1 || 
-      parseInt(coords[1]) > 10 || parseInt(coords[1]) < 1) {
+    parseInt(coords[1]) > 10 || parseInt(coords[1]) < 1) {
     process.stdout.write('\nThe coordinates you entered are out of bounds. Make sure both row and column are between 1 and 10. Try again.\n');
     return false;
   } 
@@ -202,27 +203,24 @@ playerTwo.createBlankBoards();
 
 var placementPhase = 'picking ship';
 var shipToPlace;
-var shipCoordinateStart;
-var shipToMove;
-
 
 process.stdout.write('Welcome to CLI Battleship! \n\nPlayer one, enter your name: ');
 
 process.stdin.on('data', function(data) { 
 
   // The slice is needed to get rid of the trailing newline character from the stdin data
-  data = data.toString().slice(0, data.length - 1);
+  data = data.toString().slice(0, data.length - 1).trim();
 
   // The first step in the game is to assign the player's names. This goes in order of player one, 
   // then player two, and ends with a prompt to begin ship placement for player one. 
   if (!playerOne.name || !playerTwo.name) {
-
-    !playerOne.getName() ? (playerOne.setName(data), 
-                            process.stdout.write('\nPlayer two, enter your name: ') )
-                         : (playerTwo.setName(data), 
-                            process.stdout.write('\n ' + playerOne.getName() + ', begin your ship placements. ' + 
-                            printBoardWithHeader(playerOne)));
-
+    if (!playerOne.getName()) {
+      playerOne.setName(data);
+      process.stdout.write('\nPlayer two, enter your name: ');
+    } else {
+      playerTwo.setName(data);
+      process.stdout.write('\n ' + playerOne.getName() + ', begin your ship placements. ' + printBoardWithHeader(playerOne));
+    }
   } 
 
   else if (!playerOne.isFinishedPlacing || !playerTwo.isFinishedPlacing) {
@@ -237,7 +235,7 @@ process.stdin.on('data', function(data) {
         process.stdout.write('\nThat is an invalid ship name. Please select your ship from the following options:\n ' 
                              + shipList.printShipList());
       } else {
-        shipToPlace = data;
+        shipToPlace = data.toLowerCase();
         process.stdout.write('\nChoose a starting coordinate point and direction for placing your ' + data + 
                              '.\nExample: 1,1 down or 4,4 right (note that it must stay in bounds). \n');
         placementPhase = 'placing ship';
@@ -252,20 +250,6 @@ process.stdin.on('data', function(data) {
         placementPhase = 'picking ship'
       }
     }
-
-    // if (!shipList[data]) {
-    //   process.stdout.write('\n That is an invalid ship name. Please select your ship from the following options:\n ' 
-    //                        + shipList.printShipList());
-    // }
-
-    // if (placedShipList[data]){
-    //   shipToMove = data;
-    //   process.stdout.write('\n You have already placed this ship. Would you like to move it? Type move if so.') 
-    // }
-
-    // if (data === 'move') {
-
-    // }
 
     if (shipList.numOfShips === 0) {
       if (player === playerOne) {
@@ -286,10 +270,3 @@ process.stdin.on('data', function(data) {
 
 
 });
-
-// process.stdin.resume();
-
-// process.stdout.write("Player Two: Assign your ships.");
-// process.stdin.on('data', function(data) { process.stdout.write(data); process.exit(); });
-
-// console.log(vin.printBoard());
