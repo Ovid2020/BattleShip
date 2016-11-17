@@ -131,13 +131,17 @@ Player.prototype.placeShip = function(shipName, placementData) {
         return false;
       }
     }
-
+    if (row < 1 || row > 10 || col < 1 || col > 10) {
+      process.stdout.write('\nThis placement goes out of bounds. Please enter a new placement.\n');
+      return false;
+    }
   }
 
   return true;
 
   function movePlacement(board, coords, rowOrCol, direction) {
     if (board[coords] !== 'oo') {
+      process.stdout.write('\nThis placement overlaps with another of your ships. Please enter a new placement.\n');
       resetPlacements();
       return false;
     } else {
