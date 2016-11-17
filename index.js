@@ -3,38 +3,14 @@
 // process.stdin.on('data', function(data) { process.stdout.write(data) });
 
 // 1. Set up steps -- consider conversion to OOP design
-
-const Ship = function(name, length) {
-  this.name = name;
-  this.symbol = name.slice(0, 2).toUpperCase();
-  this.length = length;
-  this.coordinates = {};
-  this.hits = 0;
-  this.status = 'unplaced';
-};
-
-Ship.prototype.assignCoordinates = function(coordinates) {
-  this.coordinates = coordinates;
-}
-
-Ship.prototype.recordHit = function() {
-  this.hits++;
-  if (this.hits === this.length) {
-    this.updateStatus('dead');
-  }
-};
-
-Ship.prototype.updateStatus = function(newStatus) {
-  this.status = newStatus;
-};
-
-const Ships = function() {
-  this.carrier = new Ship('carrier', 5);
-  this.battleship = new Ship('battleship', 4);  
-  this.cruiser = new Ship('cruiser', 3);
-  this.submarine = new Ship('submarine', 3);  
-  this.destroyer = new Ship('destroyer', 2);
+const Ships = function(playerName) {
+  this.carrier = new Ship('carrier', 5, playerName);
+  this.battleship = new Ship('battleship', 4, playerName);  
+  this.cruiser = new Ship('cruiser', 3, playerName);
+  this.submarine = new Ship('submarine', 3, playerName);  
+  this.destroyer = new Ship('destroyer', 2, playerName);
   this.numOfShips = 5;
+  this.numOfSunkenShips = 0;
 };
 
 Ships.prototype.printShipList = function() {
@@ -51,10 +27,32 @@ Ships.prototype.printShipList = function() {
   return printString;
 };
 
+const Ship = function(name, length, playerName) {
+  this.name = name;
+  this.playerName = playerName;
+  this.symbol = name.slice(0, 2).toUpperCase();
+  this.length = length;
+  this.hits = 0;
+  this.status = 'unplaced';
+};
+
+Ship.prototype.recordHit = function() {
+  this.hits++;
+  if (this.hits === this.length) {
+    this.updateStatus('dead');
+    process.stdout.write('\nWHOA! ' + this.playerName + '\'s ' + this.name + ' has been sunk!\n');
+  }
+};
+
+Ship.prototype.updateStatus = function(newStatus) {
+  this.status = newStatus;
+};
+
+
 const Player = function(name) {
-  this.name = name || null,
-  this.unPlacedShips = new Ships();
-  this.placedShips = {};
+  this.name = name;
+  this.ships = new Ships(name);
+  //this.placedShips = {};
   this.privateBoard = null;
   this.publicBoard = null;
   this.isFinishedPlacing = false;
@@ -98,13 +96,12 @@ Player.prototype.printBoard = function(board) {
 Player.prototype.placeShip = function(shipName, placementData) {
   placementData = placementData.split(' ');
   var dir = placementData[1];
-  var shipLen = this.unPlacedShips[shipName].length;
-  var shipSymbol = this.unPlacedShips[shipName].symbol;
+  var shipLen = this.ships[shipName].length;
+  var shipSymbol = this.ships[shipName].symbol;
   var coords = placementData[0].split(',');
   var row = parseInt(coords[0]);
   var col = parseInt(coords[1]);
   var placedCoords = [];
-  var newCoords;
 
   for (var i = 0; i < shipLen; i++) {
     if (dir === 'left') {
@@ -168,11 +165,9 @@ function isValidPlacementData(placementData) {
     process.stdout.write('\nYour entry is improperly formatted. Try again. An example of a valid format is: 1,1 down\n');
     return false;
   }  
-  if (parseInt(coords[0]) > 10 || parseInt(coords[0]) < 1 || 
-    parseInt(coords[1]) > 10 || parseInt(coords[1]) < 1) {
-    process.stdout.write('\nThe coordinates you entered are out of bounds. Make sure both row and column are between 1 and 10. Try again.\n');
+  if (!areValidCoords(coords)) {
     return false;
-  } 
+  }
   if (validDirections.indexOf(placementData[1]) === -1) {
     process.stdout.write('\nYou entered an invalid direction. Enter left, right, up, or down. Try again.\n');
     return false;
@@ -180,21 +175,57 @@ function isValidPlacementData(placementData) {
   return true;
 };
 
-function printBoardWithHeader(player) {
-  return 'Your current board is:\n' + player.printBoard(player.privateBoard) +
-  'Note: oo indicates open spots, letters indicate a ship is placed there.\n\n' + 
-  'Your remaining ships to place are:\n ' + player.unPlacedShips.printShipList() + '\n' + 
-  'Type in the ship\'s name (not case sensitive) that you would like to place, then hit enter.\n';
+function checkAttackCoords(coords, enemy, yourPublicBoard) {
+  if (!areValidCoords(coords)) {
+    return false;
+  }
+  if (enemy.privateBoard[coords] !== 'oo'){
+    process.stdout.write('\nIT\'S A HIT!.\n');
+    yourPublicBoard[coords] = 'xx';
+    const shipName = '';
+    switch (enemy.privateBoard[coords]) {
+      case 'CA':
+        shipName = 'carrier';
+        break;
+      case 'BA':
+        shipName = 'battleship';
+        break; 
+      case 'CR':
+        shipName = 'cruiser';
+        break;  
+      case 'SU':
+        shipName = 'submarine';
+        break;  
+      case 'DE':
+        shipName = 'destroyer';
+        break;   
+    }
+    enemy.ships[shipName].recordHit();
+    if (enemy.ships[shipName].status === 'dead' ) {
+      enemy.ships.numOfSunkenShips++;
+    }
+  } else {
+    process.stdout.write('\nIt\'s a miss.\n');
+  }
+  process.stdout.write('\nAfter this turn, your board is: \n\n' + yourPublicBoard + '\n\n');
 };
 
-// // 2. User board customizatoin: both players assign ships. 
-// process.stdout.write("Player One: Assign your ships.");
-// process.stdin.on('data', function(data) { process.stdout.write(data) });
+function areValidCoords(coords) {
+  if (parseInt(coords[0]) > 10 || parseInt(coords[0]) < 1 || 
+    parseInt(coords[1]) > 10 || parseInt(coords[1]) < 1) {
+    process.stdout.write('\nThe coordinates you entered are out of bounds. Make sure both row and column are between 1 and 10. Try again.\n');
+    return false;
+  } 
+  return true;
+};
 
-// // 3. Gameplay functions: Hit, Miss, Already Taken, Sunk, Win
-
-// var vin = new Player('Vincent');
-// vin.createBlankBoards();
+function printBoardWithHeader(player, shouldPrintFooter) {
+  return 'Your current board is:\n' + player.printBoard(player.privateBoard) + (shouldPrintFooter ? 
+  '\nNote: oo indicates open spots, letters indicate a ship is placed there.\n\n' + 
+  'Your remaining ships to place are:\n ' + player.ships.printShipList() + '\n' + 
+  'Type in the ship\'s name (not case sensitive) that you would like to place, then hit enter.\n'
+  : '');
+};
 
 var playerOne = new Player();
 playerOne.createBlankBoards();
@@ -202,7 +233,9 @@ var playerTwo = new Player();
 playerTwo.createBlankBoards();
 
 var placementPhase = 'picking ship';
+var attackPhase = 'intro';
 var shipToPlace;
+var attackingPlayer = 'player one';
 
 process.stdout.write('Welcome to CLI Battleship! \n\nPlayer one, enter your name: ');
 
@@ -219,16 +252,14 @@ process.stdin.on('data', function(data) {
       process.stdout.write('\nPlayer two, enter your name: ');
     } else {
       playerTwo.setName(data);
-      process.stdout.write('\n ' + playerOne.getName() + ', begin your ship placements. ' + printBoardWithHeader(playerOne));
+      process.stdout.write('\n ' + playerOne.getName() + ', begin your ship placements. ' + printBoardWithHeader(playerOne, true));
     }
   } 
 
   else if (!playerOne.isFinishedPlacing || !playerTwo.isFinishedPlacing) {
-
     player = !playerOne.isFinishedPlacing ? playerOne : playerTwo;
-    var privateBoard = player.privateBoard;
-    var shipList = player.unPlacedShips;
-    var placedShipList = player.placedShips;
+    var shipList = player.ships;
+    //var placedShipList = player.placedShips;
 
     if (placementPhase === 'picking ship') {
       if (!shipList[data.toLowerCase()]) {
@@ -242,31 +273,54 @@ process.stdin.on('data', function(data) {
       } 
     } else if (placementPhase === 'placing ship' && isValidPlacementData(data)) {
       if (player.placeShip(shipToPlace, data)) {
-        placedShipList[shipToPlace] = shipList[shipToPlace];
+        //placedShipList[shipToPlace] = shipList[shipToPlace];
         delete shipList[shipToPlace];
         shipList.numOfShips--;
-        process.stdout.write('\n Ok, your ' + shipToPlace + ' is now placed. ' + printBoardWithHeader(player));  
+        process.stdout.write('\n Ok, your ' + shipToPlace + ' is now placed. ' + printBoardWithHeader(player, shipList.numOfShips > 0));  
         shipToPlace = null;
-        placementPhase = 'picking ship'
+        placementPhase = 'picking ship';
       }
     }
 
     if (shipList.numOfShips === 0) {
       if (player === playerOne) {
-        process.stdout.write('\n ' + playerTwo.getName() + ', begin placing ships: \n' + printBoardWithHeader(playerTwo));
-        placementPhase = 'picking ship';
         playerOne.isFinishedPlacing = true;
+        placementPhase = 'picking ship';
+        process.stdout.write('\n ' + playerTwo.getName() + ', begin picking ships: \n' + printBoardWithHeader(playerTwo, true));
       } else {
-        (process.stdout.write('\nShip placement is over! Now, the game begins.\n' + playerOne.getName() + 
-                              ' has the first move. Make an attack by entering a coordinate ' +
-                              'pair in the following format: 1,1 . This example attachs the position at row 1, column ' + 
-                              'one.\n'));
+        playerTwo.isFinishedPlacing = true;
         placementPhase = 'finished placing';
-
+        attackingPlayer = playerOne;
+        // Give the players new ships for the attack rounds.
+        playerOne.ships = new Ships(playerOne.getName());
+        playerTwo.ships = new Ships(playerTwo.getName());
       }
     }
-
   }
+
+  if (playerOne.isFinishedPlacing && playerTwo.isFinishedPlacing) {
+    if (attackPhase === 'intro') {
+      process.stdout.write('\n ~~~~~ BEGIN THE BATTLE ~~~~~ \n\nShip placement is over! Now, the game begins.\n' + playerOne.getName() + 
+                           ' has the first move. Here is your board, with all the enemy ships hidden: ' + 
+                           playerOne.printBoard(playerOne.publicBoard) +
+                           '\nAttack by entering a row,column pair.\n');
+      attackPhase = 'attacking';
+    }
+    else if (attackPhase === 'attacking') {
+      if (attackingPlayer === 'player one') {
+        checkAttackCoords(data, playerTwo, playerOne.publicBoard);
+        if (true) {
+
+        }
+        attackingPlayer = 'player two';
+      } else if (attackingPlayer === 'player two') {
+        checkAttackCoords(data, playerOne, playerTwo.publicBoard);
+        attackingPlayer = 'player one';
+      }
+    }
+  }
+
+
 
 
 });
