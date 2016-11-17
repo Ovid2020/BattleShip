@@ -6,7 +6,7 @@
 
 const Ship = function(name, length) {
   this.name = name;
-  this.symbol = name.slice(0, 2);
+  this.symbol = name.slice(0, 2).toUpperCase();
   this.length = length;
   this.coordinates = {};
   this.hits = 0;
@@ -72,7 +72,7 @@ Player.prototype.createBlankBoards = function(){
   var board = {};
   for (var i = 1; i <= 10; i++) {
     for (var j = 1; j <= 10; j++) {
-      board[i + "," + j] = 'o';
+      board[i + "," + j] = 'oo';
     }
   }
   this.privateBoard = Object.assign({}, board);
@@ -99,9 +99,10 @@ Player.prototype.placeShip = function(shipName, placementData) {
   var shipLen = this.unPlacedShips[shipName].length;
   var shipSymbol = this.unPlacedShips[shipName].symbol;
   var coords = placementData[0].split(',');
-  var row = coords[0];
-  var col = coords[1];
-
+  var row = parseInt(coords[0]);
+  var col = parseInt(coords[1]);
+  var placedCoords = [];
+  var newCoords;
 
   // function movePlacement(currentSpot, rowOrCol, direction){
   //   for (var i = 0; i < shipLen; i++) {
@@ -110,36 +111,70 @@ Player.prototype.placeShip = function(shipName, placementData) {
   //   }
   // };
 
-  if (dir === 'left') {
-    for (var i = 0; i < shipLen; i++) {
-      this.privateBoard[coords[0], col] = shipSymbol;
-      col--;
+  for (var i = 0; i < shipLen; i++) {
+    if (dir === 'left') {
+      newCoords = coords[0] + ',' + col;
+      if (!movePlacement(this.privateBoard, newCoords, 'col', -1)) {
+        return false;
+      }
+    }
+    if (dir === 'right') {
+      newCoords = coords[0] + ',' + col;
+      if (!movePlacement(this.privateBoard, newCoords, 'col', 1)) {
+        return false;
+      }
+    }
+    if (dir === 'up') {
+      newCoords = row + ',' + coords[1];
+      if (!movePlacement(this.privateBoard, newCoords, 'row', -1)) {
+        return false;
+      }
+    }
+    if (dir === 'down') {
+      newCoords = row + ',' + coords[1];
+      if (!movePlacement(this.privateBoard, newCoords, 'row', 1)) {
+        return false;
+      }
+    }
+
+  }
+  
+  return true;
+
+  function movePlacement(board, coords, rowOrCol, direction) {
+    if (board[coords] !== 'oo') {
+      console.log("board coords is ", board[coords]);
+      resetPlacements();
+      return false;
+    } else {
+      placedCoords.push(coords);
+      board[coords] = shipSymbol;
+      rowOrCol === 'row' ? row += direction : col += direction;
+      return true; 
     }
   }
 
-  if (dir === 'right') {
-    for (var i = 0; i < shipLen; i++) {
-      this.privateBoard[coords[0], col] = shipSymbol;
-      col++;
-    }
-  }
-
-  if (dir === 'up') {
-    for (var i = 0; i < shipLen; i++) {
-      this.privateBoard[row, coords[1]] = shipSymbol;
-      row--;
-    }
-  } 
-
-  if (dir === 'down') {
-    for (var i = 0; i < shipLen; i++) {
-      this.privateBoard[row, coords[1]] = shipSymbol;
-      row++;
-    }
+  function resetPlacements() {
+    placedCoords.forEach(function(coord) {
+      coord = 'oo';
+    });
   }
 };
 
-function isValidPlacement(placementData) {
+function isValidPlacementData(placementData) {
+  placementData = placementData.split(' ');
+  var coords = placementData[0].split(',');
+  var validDirections = ['left', 'right', 'down', 'up'];
+  if (placementData.length !== 2) {
+    return false;
+  }  
+  if (parseInt(coords[0]) > 10 || parseInt(coords[0]) < 1 || 
+      parseInt(coords[1]) > 10 || parseInt(coords[1]) < 1) {
+    return false;
+  } 
+  if (validDirections.indexOf(placementData[1]) === -1) {
+    return false;
+  }
   return true;
 };
 
@@ -164,12 +199,17 @@ playerOne.createBlankBoards();
 var playerTwo = new Player();
 playerTwo.createBlankBoards();
 
+var shipToPlace;
+var shipCoordinateStart;
+var shipToMove;
+
+
 process.stdout.write("Welcome to CLI Battleship! \n\n Player one, enter your name: ");
 
 process.stdin.on('data', function(data) { 
 
   // The slice is needed to get rid of the trailing newline character from the stdin data
-  data = data.slice(0, data.length - 1)
+  data = data.toString().slice(0, data.length - 1);
 
   // The first step in the game is to assign the player's names. This goes in order of player one, 
   // then player two, and ends with a prompt to begin ship placement for player one. 
@@ -189,24 +229,23 @@ process.stdin.on('data', function(data) {
     var privateBoard = player.privateBoard;
     var shipList = player.unPlacedShips;
     var placedShipList = player.placedShips;
-    var shipToPlace;
-    var shipCoordinateStart;
-    var shipToMove;
+
 
     if (shipList[data]) {
       shipToPlace = data;
       process.stdout.write('\n Where would you like to place your ' + data + '? ' + 
                            'Enter a coordinate pair in the format row,column direction. For example, 1,1 down ' +
                            'indicates you wish to begin your placement at row 1, column 1, and you want the ship ' + 
-                           ' to go vertically downward. Valid directions are left, right, up, and down.');  
+                           ' to go vertically downward. Valid directions are left, right, up, and down.\n');  
     }
 
-    if (isValidPlacement(data)) {
-      player.placeShip(shipToPlace, data);
-      placedShipList[shipToPlace] = shipList[shipToPlace];
-      delete shipList[shipToPlace];
-      process.stdout.write('\n Ok, your ' + shipToPlace + ' is now placed. ' + printBoardWithHeader(playerOne));  
-      shipToPlace = null;
+    if (isValidPlacementData(data)) {
+      if (player.placeShip(shipToPlace, data)) {
+        placedShipList[shipToPlace] = shipList[shipToPlace];
+        delete shipList[shipToPlace];
+        process.stdout.write('\n Ok, your ' + shipToPlace + ' is now placed. ' + printBoardWithHeader(playerOne));  
+        shipToPlace = null;
+      }
     }
 
     if (!shipList[data]) {
