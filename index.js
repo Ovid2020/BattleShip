@@ -40,7 +40,7 @@ Ship.prototype.recordHit = function() {
   this.hits++;
   if (this.hits === this.length) {
     this.updateStatus('dead');
-    process.stdout.write('\nWHOA! ' + this.playerName + '\'s ' + this.name + ' has been sunk!\n');
+    //process.stdout.write('\nWHOA! ' + this.playerName + '\'s ' + this.name + ' has been sunk!\n');
   }
 };
 
@@ -182,7 +182,7 @@ function checkAttackCoords(coords, enemy, yourPublicBoard) {
   if (enemy.privateBoard[coords] !== 'oo'){
     process.stdout.write('\nIT\'S A HIT!.\n');
     yourPublicBoard[coords] = 'xx';
-    const shipName = '';
+    var shipName;
     switch (enemy.privateBoard[coords]) {
       case 'CA':
         shipName = 'carrier';
@@ -207,7 +207,8 @@ function checkAttackCoords(coords, enemy, yourPublicBoard) {
   } else {
     process.stdout.write('\nIt\'s a miss.\n');
   }
-  process.stdout.write('\nAfter this turn, your board is: \n\n' + yourPublicBoard + '\n\n');
+  process.stdout.write('\nAfter this turn, your board is: \n\n' + Player.prototype.printBoard(yourPublicBoard) + '\n\n');
+  return true;
 };
 
 function areValidCoords(coords) {
@@ -235,7 +236,7 @@ playerTwo.createBlankBoards();
 var placementPhase = 'picking ship';
 var attackPhase = 'intro';
 var shipToPlace;
-var attackingPlayer = 'player one';
+var attackingPlayer;
 
 process.stdout.write('Welcome to CLI Battleship! \n\nPlayer one, enter your name: ');
 
@@ -259,7 +260,6 @@ process.stdin.on('data', function(data) {
   else if (!playerOne.isFinishedPlacing || !playerTwo.isFinishedPlacing) {
     player = !playerOne.isFinishedPlacing ? playerOne : playerTwo;
     var shipList = player.ships;
-    //var placedShipList = player.placedShips;
 
     if (placementPhase === 'picking ship') {
       if (!shipList[data.toLowerCase()]) {
@@ -273,7 +273,6 @@ process.stdin.on('data', function(data) {
       } 
     } else if (placementPhase === 'placing ship' && isValidPlacementData(data)) {
       if (player.placeShip(shipToPlace, data)) {
-        //placedShipList[shipToPlace] = shipList[shipToPlace];
         delete shipList[shipToPlace];
         shipList.numOfShips--;
         process.stdout.write('\n Ok, your ' + shipToPlace + ' is now placed. ' + printBoardWithHeader(player, shipList.numOfShips > 0));  
@@ -286,11 +285,11 @@ process.stdin.on('data', function(data) {
       if (player === playerOne) {
         playerOne.isFinishedPlacing = true;
         placementPhase = 'picking ship';
-        process.stdout.write('\n ' + playerTwo.getName() + ', begin picking ships: \n' + printBoardWithHeader(playerTwo, true));
+        process.stdout.write('\n\n\n\n\n ' + playerOne.getName() + ' is finished placing ships. ' + playerTwo.getName() + ', begin picking ships: \n' + printBoardWithHeader(playerTwo, true));
       } else {
         playerTwo.isFinishedPlacing = true;
         placementPhase = 'finished placing';
-        attackingPlayer = playerOne;
+        attackingPlayer = 'player one';
         // Give the players new ships for the attack rounds.
         playerOne.ships = new Ships(playerOne.getName());
         playerTwo.ships = new Ships(playerTwo.getName());
@@ -300,27 +299,38 @@ process.stdin.on('data', function(data) {
 
   if (playerOne.isFinishedPlacing && playerTwo.isFinishedPlacing) {
     if (attackPhase === 'intro') {
-      process.stdout.write('\n ~~~~~ BEGIN THE BATTLE ~~~~~ \n\nShip placement is over! Now, the game begins.\n' + playerOne.getName() + 
-                           ' has the first move. Here is your board, with all the enemy ships hidden: ' + 
-                           playerOne.printBoard(playerOne.publicBoard) +
-                           '\nAttack by entering a row,column pair.\n');
+      process.stdout.write('\n\n\n\n\n ~~~~~ BEGIN THE BATTLE ~~~~~ \n\nShip placement is over! Now, the game begins.\n' + playerOne.getName() + 
+                           ' has the first move. All the enemy ships hidden are hidden on this board: ' + 
+                           playerOne.printBoard(playerOne.publicBoard) + '\nAttack by entering a row,column pair.\n');
       attackPhase = 'attacking';
     }
     else if (attackPhase === 'attacking') {
       if (attackingPlayer === 'player one') {
-        checkAttackCoords(data, playerTwo, playerOne.publicBoard);
-        if (true) {
-
-        }
-        attackingPlayer = 'player two';
+        if (checkAttackCoords(data, playerTwo, playerOne.publicBoard)) {
+          if (playerTwo.ships.numOfSunkenShips === playerTwo.ships.numOfShips) {
+            process.stdout.write('\n\n ~*~*~*~* GAME OVER *~*~*~*~\n' + playerOne.getName() + ' has won the battle!!');
+          } else {
+            setTimeout(function(){
+              attackingPlayer = 'player two';
+              process.stdout.write('\n' + playerTwo.getName() + ', it\'s now your turn. Here\'s your attack board:\n ' + 
+                                   playerTwo.printBoard(playerTwo.publicBoard) + '\nAttack by entering a row,column pair.\n');   
+            }, 2500);
+          }
+        }  
       } else if (attackingPlayer === 'player two') {
-        checkAttackCoords(data, playerOne, playerTwo.publicBoard);
-        attackingPlayer = 'player one';
+        if (checkAttackCoords(data, playerOne, playerTwo.publicBoard)) {
+          if (playerOne.ships.numOfSunkenShips === playerOne.ships.numOfShips) {
+            process.stdout.write('\n\n ~*~*~*~* GAME OVER *~*~*~*~\n' + playerTwo.getName() + ' has won the battle!!');
+          } else {
+            setTimeout(function(){
+              attackingPlayer = 'player one';
+              process.stdout.write('\n' + playerOne.getName() + ', it\'s now your turn. Here\'s your attack board:\n ' + 
+                                   playerOne.printBoard(playerOne.publicBoard) + '\nAttack by entering a row,column pair.\n');
+            }, 2500);
+          }
+        }    
       }
     }
   }
-
-
-
 
 });
