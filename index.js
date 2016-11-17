@@ -176,12 +176,17 @@ function isValidPlacementData(placementData) {
 };
 
 function checkAttackCoords(coords, enemy, yourPublicBoard) {
-  if (!areValidCoords(coords)) {
+  if (!areValidCoords(coords.split(','))) {
+    return false;
+  } 
+  if (yourPublicBoard[coords] !== 'oo') {
+    process.stdout.write('\nYou\'ve already attacked that spot. Try again.\n');
     return false;
   }
+
   if (enemy.privateBoard[coords] !== 'oo'){
     process.stdout.write('\nIT\'S A HIT!.\n');
-    yourPublicBoard[coords] = 'xx';
+    yourPublicBoard[coords] = 'XX';
     var shipName;
     switch (enemy.privateBoard[coords]) {
       case 'CA':
@@ -206,6 +211,8 @@ function checkAttackCoords(coords, enemy, yourPublicBoard) {
     }
   } else {
     process.stdout.write('\nIt\'s a miss.\n');
+    yourPublicBoard[coords] = '--';
+
   }
   process.stdout.write('\nAfter this turn, your board is: \n\n' + Player.prototype.printBoard(yourPublicBoard) + '\n\n');
   return true;
@@ -300,8 +307,8 @@ process.stdin.on('data', function(data) {
   if (playerOne.isFinishedPlacing && playerTwo.isFinishedPlacing) {
     if (attackPhase === 'intro') {
       process.stdout.write('\n\n\n\n\n ~~~~~ BEGIN THE BATTLE ~~~~~ \n\nShip placement is over! Now, the game begins.\n' + playerOne.getName() + 
-                           ' has the first move. All the enemy ships hidden are hidden on this board: ' + 
-                           playerOne.printBoard(playerOne.publicBoard) + '\nAttack by entering a row,column pair.\n');
+                           ' has the first move. All the enemy ships hidden are hidden on this board:\n' + 
+                           playerOne.printBoard(playerOne.publicBoard) + '\nNote: oo shows unattacked spots, -- shows misses, XX shows hits\n\n Attack by entering a row,column pair: ');
       attackPhase = 'attacking';
     }
     else if (attackPhase === 'attacking') {
@@ -312,8 +319,8 @@ process.stdin.on('data', function(data) {
           } else {
             setTimeout(function(){
               attackingPlayer = 'player two';
-              process.stdout.write('\n' + playerTwo.getName() + ', it\'s now your turn. Here\'s your attack board:\n ' + 
-                                   playerTwo.printBoard(playerTwo.publicBoard) + '\nAttack by entering a row,column pair.\n');   
+              process.stdout.write('\n' + playerTwo.getName() + ', it\'s now your turn.' + 
+                                   playerTwo.printBoard(playerTwo.publicBoard) + '\nNote: oo shows unattacked spots, -- shows misses, XX shows hits):\n\n Attack by entering a row,column pair: ');   
             }, 2500);
           }
         }  
@@ -324,8 +331,8 @@ process.stdin.on('data', function(data) {
           } else {
             setTimeout(function(){
               attackingPlayer = 'player one';
-              process.stdout.write('\n' + playerOne.getName() + ', it\'s now your turn. Here\'s your attack board:\n ' + 
-                                   playerOne.printBoard(playerOne.publicBoard) + '\nAttack by entering a row,column pair.\n');
+              process.stdout.write('\n' + playerOne.getName() + ', it\'s now your turn. Here\'s your attack board (oo shows unattacked spots, -- shows misses, XX shows hits):\n ' + 
+                                   playerOne.printBoard(playerOne.publicBoard) + '\nNote: oo shows unattacked spots, -- shows misses, XX shows hits):\n\n Attack by entering a row,column pair: ');
             }, 2500);
           }
         }    
