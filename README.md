@@ -7,7 +7,7 @@
 1. [Requirements](#requirements)
 1. [Installation](#installation)
 1. [Gameplay](#Gameplay)
-  1. [Starting the Game](#Starting)
+   1. [Starting the Game](#Starting-the-Game)
 
 
 ##Requirements
@@ -18,6 +18,6 @@
 
 ##Gameplay
 
-###Starting
+###Starting the Game
 
 Type node index from within the root directory. 
