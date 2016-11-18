@@ -4,16 +4,6 @@ const Game = require('./Objects/Game.js');
 const customStrings = require('./strings.js').customStrings;
 const stringBank = require('./strings.js').stringBank;
 
-// var game.playerOne = new Player();
-// game.playerOne.createBlankBoards();
-// var game.playerTwo = new Player();
-// game.playerTwo.createBlankBoards();
-
-// var game.placementPhase = 'picking ship';
-// var game.attackPhase = 'intro';
-// var game.shipToPlace;
-// var game.attackingPlayer;
-
 const game = new Game();
 game.playerOne = new Player();
 game.playerOne.createBlankBoards();

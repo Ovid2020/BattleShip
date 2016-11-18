@@ -5,7 +5,6 @@ const stringBank = require('../strings.js').stringBank;
 const Player = function(name) {
   this.name = name;
   this.ships = new Ships(name);
-  //this.placedShips = {};
   this.privateBoard = null;
   this.publicBoard = null;
   this.isFinishedPlacing = false;
@@ -82,7 +81,6 @@ Player.prototype.placeShip = function(shipName, placementData) {
       }
     }
   }
-
   return true;
 
   function movePlacement(board, coords, rowOrCol, direction) {

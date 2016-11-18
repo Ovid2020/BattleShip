@@ -29,11 +29,13 @@ Game.prototype.isValidPlacementData = function(placementData) {
 };
 
 Game.prototype.attackSequence = function(data, enemy, you) {
-  //var playerOne = this.playerOne;
-  //var attackingPlayer = this.attackingPlayer
   if (this.checkAttackCoords(data, enemy, you.publicBoard)) {
     if (enemy.ships.numOfSunkenShips === enemy.ships.numOfShips) {
       process.stdout.write(customStrings.GAME_OVER(you));
+      setTimeout(function(){
+        process.stdout.write(stringBank.PROMPT_NEW_GAME);
+        process.stdin.end();
+      }, 2500);
     } else {
       setTimeout((function(){
         this.attackingPlayer = you === this.playerOne ? 'player two' : 'player one';
