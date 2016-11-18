@@ -6,8 +6,8 @@
 
 1. [Requirements](#requirements)
 1. [Installation](#installation)
-1. [Starting the Game](#Starting)
 1. [Gameplay](#Gameplay)
+  1. [Starting the Game](#Starting)
 
 
 ##Requirements
@@ -16,6 +16,8 @@
 ##Installation
 > No external modules are used. No need to use npm install. 
 
-##Starting the Game
+##Gameplay
+
+###Starting
 
 Type node index from within the root directory. 
