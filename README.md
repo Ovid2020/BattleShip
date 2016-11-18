@@ -6,7 +6,7 @@
 
 1. [Requirements](#requirements)
 1. [Installation](#installation)
-1. [Starting the Game](#Starting the Game)
+1. [Starting the Game](#Starting)
 1. [Gameplay](#Gameplay)
 
 
