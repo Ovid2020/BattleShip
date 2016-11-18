@@ -37,54 +37,54 @@ when it's your turn to place, is your blank board, then the list of ships you ca
 
 Here's an example: 
 
-  Player One, begin your ship placements. Your current board is:
-
-     1  2  3  4  5  6  7  8  9  10
-  1  oo oo oo oo oo oo oo oo oo oo
-  2  oo oo oo oo oo oo oo oo oo oo
-  3  oo oo oo oo oo oo oo oo oo oo
-  4  oo oo oo oo oo oo oo oo oo oo
-  5  oo oo oo oo oo oo oo oo oo oo
-  6  oo oo oo oo oo oo oo oo oo oo
-  7  oo oo oo oo oo oo oo oo oo oo
-  8  oo oo oo oo oo oo oo oo oo oo
-  9  oo oo oo oo oo oo oo oo oo oo
-  10 oo oo oo oo oo oo oo oo oo oo
-
-  (oo indicates open spots, letters indicate a ship is placed there)
-
-  Your remaining ships to place are:
-  CARRIER (length: 5)
-  BATTLESHIP (length: 4)
-  CRUISER (length: 3)
-  SUBMARINE (length: 3)
-  DESTROYER (length: 2)
+>  Player One, begin your ship placements. Your current board is:
+>
+>     1  2  3  4  5  6  7  8  9  10
+>  1  oo oo oo oo oo oo oo oo oo oo
+>  2  oo oo oo oo oo oo oo oo oo oo
+>  3  oo oo oo oo oo oo oo oo oo oo
+>  4  oo oo oo oo oo oo oo oo oo oo
+>  5  oo oo oo oo oo oo oo oo oo oo
+>  6  oo oo oo oo oo oo oo oo oo oo
+>  7  oo oo oo oo oo oo oo oo oo oo
+>  8  oo oo oo oo oo oo oo oo oo oo
+>  9  oo oo oo oo oo oo oo oo oo oo
+>  10 oo oo oo oo oo oo oo oo oo oo
+>
+>  (oo indicates open spots, letters indicate a ship is placed there)
+>
+>  Your remaining ships to place are:
+>  CARRIER (length: 5)
+>  BATTLESHIP (length: 4)
+>  CRUISER (length: 3)
+>  SUBMARINE (length: 3)
+>  DESTROYER (length: 2)
 
 This is followed by a prompt to place a ship. Here's what it looks like: 
   
-  Which ship do you want to place?
-  Enter its name (not case sensitive):
+>  Which ship do you want to place?
+>  Enter its name (not case sensitive):
 
 Enter one of the names from the list, for example, carrier. When you do that, you'll see the following prompt: 
 
-  Where do you want to place your carrier?
-  Valid input format is row,column direction (example: 1,1 down). Enter here: 
+>  Where do you want to place your carrier?
+>  Valid input format is row,column direction (example: 1,1 down). Enter here: 
 
-When you enter a corrent input, the placement will start your ship at the row,columb point on your board, and move 
+When you enter a correct input, the placement will start your ship at the row,columb point on your board, and move 
 however many points the ship is long in the direction you entered. For example, if your current ship is the carrier 
 and you enter 1,1 down, your board should look like: 
 
-     1  2  3  4  5  6  7  8  9  10
-  1  CA oo oo oo oo oo oo oo oo oo
-  2  CA oo oo oo oo oo oo oo oo oo
-  3  CA oo oo oo oo oo oo oo oo oo
-  4  CA oo oo oo oo oo oo oo oo oo
-  5  CA oo oo oo oo oo oo oo oo oo
-  6  oo oo oo oo oo oo oo oo oo oo
-  7  oo oo oo oo oo oo oo oo oo oo
-  8  oo oo oo oo oo oo oo oo oo oo
-  9  oo oo oo oo oo oo oo oo oo oo
-  10 oo oo oo oo oo oo oo oo oo oo
+>     1  2  3  4  5  6  7  8  9  10
+>  1  CA oo oo oo oo oo oo oo oo oo
+>  2  CA oo oo oo oo oo oo oo oo oo
+>  3  CA oo oo oo oo oo oo oo oo oo
+>  4  CA oo oo oo oo oo oo oo oo oo
+>  5  CA oo oo oo oo oo oo oo oo oo
+>  6  oo oo oo oo oo oo oo oo oo oo
+>  7  oo oo oo oo oo oo oo oo oo oo
+>  8  oo oo oo oo oo oo oo oo oo oo
+>  9  oo oo oo oo oo oo oo oo oo oo
+>  10 oo oo oo oo oo oo oo oo oo oo
 
 All these prompts and displays repeat till player one has placed all five ships in valid locations. Note that the ships cannot overlap 
 with each other, and cannot start out of bounds, nor go out of bounds when the placement moves in your chosen direction. This means you 
