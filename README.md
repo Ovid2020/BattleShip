@@ -19,7 +19,6 @@
 > No external modules are used. No need to use npm install. 
 
 ##Gameplay
-<<<<<<< HEAD
 
 ###Starting the Game
 
