@@ -7,6 +7,8 @@ const Ship = function(name, length, playerName) {
   this.status = 'unplaced';
 };
 
+// If the attacking player attacks a place in the enemy player's private board where a ship exists, then that
+// ship records a hit. If the number of hits reach the length of the ship, it sinks, and is recorded as 'dead'.
 Ship.prototype.recordHit = function() {
   this.hits++;
   if (this.hits === this.length) {
@@ -15,6 +17,7 @@ Ship.prototype.recordHit = function() {
   }
 };
 
+// Update the ship's status. 
 Ship.prototype.updateStatus = function(newStatus) {
   this.status = newStatus;
 };

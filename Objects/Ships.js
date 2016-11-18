@@ -10,6 +10,7 @@ const Ships = function(playerName) {
   this.numOfSunkenShips = 0;
 };
 
+// Print all the ships in the player's list. This will be used in placements; after a ship is placed, it is deleted.
 Ships.prototype.printShipList = function() {
   var printString = '';
   for (var key in this) {
@@ -18,6 +19,7 @@ Ships.prototype.printShipList = function() {
       if (printString.length) {
         printString += ' ';
       }
+      // Print the ship's name in all caps and then its length.
       printString += key.toUpperCase() + ' (length: ' + this[key].length + ') '+ '\n';
     }
   }

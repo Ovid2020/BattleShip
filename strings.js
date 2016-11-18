@@ -1,3 +1,5 @@
+// Keep all the user-facing strings of the game organized in stringBank, an object containing all the constant stings, 
+// and customStrings, an object containing functions which return strings customized to game states and player properties. 
 const stringBank = {
   TITLE: '       *         *                 *\n'+
          '   *                     *                    *\n'+
@@ -31,7 +33,7 @@ const customStrings = {
     : '');
   },
   PLAYER_ONE_PLACEMENT: function (player) {
-    return '\x1B[2J\n' + player.getName() + ', begin your ship placements. ' + customStrings.BOARD_WITH_HOWTO(player, true);
+    return '\x1B[2J\n' + player.name + ', begin your ship placements. ' + customStrings.BOARD_WITH_HOWTO(player, true);
   },
   INVALID_SHIP_NAME: function (shipList) {
     return '\nThat is an invalid ship name. Please select your ship from the following options:\n ' + shipList.printShipList();
@@ -44,21 +46,21 @@ const customStrings = {
     return '\nOk, your ' + shipToPlace + ' is now placed. ' + customStrings.BOARD_WITH_HOWTO(player, shipList.numOfShips > 0);
   },
   PLAYER_TWO_PLACEMENT: function (playerOne, playerTwo) {
-    return '\x1B[2J\n' + playerOne.getName() + ' is finished placing ships. ' + playerTwo.getName() + 
+    return '\x1B[2J\n' + playerOne.name + ' is finished placing ships. ' + playerTwo.name + 
            ', begin picking ships. ' + customStrings.BOARD_WITH_HOWTO(playerTwo, true);
   }, 
   BEGIN_BATTLE: function (playerOne) {
-    return '\x1B[2J\n ~~~~~ BEGIN THE BATTLE ~~~~~ \n\nShip placement is over! Now, the game begins.\n' + playerOne.getName() + 
+    return '\x1B[2J\n ~~~~~ BEGIN THE BATTLE ~~~~~ \n\nShip placement is over! Now, the game begins.\n' + playerOne.name + 
            ' has the first move. All the enemy ships hidden are hidden on this board:\n' + 
             playerOne.printBoard(playerOne.publicBoard) + 
             '\n(oo shows unattacked spots, -- shows misses, XX shows hits)\n\nAttack by entering a row,column pair: ';
   }, 
   PROMPT_NEXT_ATTACK: function (player) {
-    return '\n' + player.getName() + ', it\'s now your turn.\n' + player.printBoard(player.publicBoard) + 
+    return '\n' + player.name + ', it\'s now your turn.\n' + player.printBoard(player.publicBoard) + 
             '\nNote: oo shows unattacked spots, -- shows misses, XX shows hits):\n\nAttack by entering a row,column pair: '
   },
   GAME_OVER: function (player) {
-    return '\n\n ~*~*~*~* GAME OVER *~*~*~*~\n' + player.getName() + ' has won the battle!!\n\n\n';
+    return '\n\n ~*~*~*~* GAME OVER *~*~*~*~\n' + player.name + ' has won the battle!!\n\n\n';
   }
 };
 
