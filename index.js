@@ -20,11 +20,11 @@ process.stdin.on('data', function(data) {
    // then player two, and ends with a prompt to begin ship placement for player one. 
   if (!game.playerOne.name || !game.playerTwo.name) {
     if (!game.playerOne.name) {
-      game.playerOne.setName(data);
+      game.playerOne.name = data;
       // This prompts player two to enter name. 
       process.stdout.write(stringBank.PROMPT_NAME_TWO);
     } else {
-      game.playerTwo.setName(data);
+      game.playerTwo.name = data;
       // This prompt leads into step 2. 
       process.stdout.write(customStrings.PLAYER_ONE_PLACEMENT(game.playerOne));
     }
