@@ -1,10 +1,11 @@
-# CLI BattleShip
 >     
 >           ||
 >          ||||
 >     ___...||..._________
 >       o   o   o   o   /       
 >     ^~^^~^~^~^^~^~^~^^~^~^^~^~^~^^~~^^~^~^^~~~^^~~~~^~~~~~^~~~~^
+
+# CLI BattleShip
 
 Enjoy all the thrills of your favorite naval-themed boardgame from the comforts of your Node-equipped terminal! Battle a friend. Sink 
 those ships! 
