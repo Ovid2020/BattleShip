@@ -136,7 +136,7 @@ there won't be a need to keep looking away from the terminal. You'll both be att
 Now that both players have privately placed all the ships, it's time to begin the attack phase of the game. Player one will begin 
 attacking first, then player two goes. You will keep switching back and forth till one of you has sunk all of the other player's ships. 
 
-Here's what player one will see, when the attack phase begins:
+Here's what you'll see when the attack phase begins:
 
 >      ~~~~~ BEGIN THE BATTLE ~~~~~
 >     
