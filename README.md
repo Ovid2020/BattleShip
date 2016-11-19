@@ -20,10 +20,10 @@ those ships!
    1. [Attacks](#attacks)  
 
 ##Requirements
-- Node 0.10.x
+- Node 0.10.x or newer (code was written with v. 6.3.1)
 
 ##Installation
-> No external modules nor libraries are used. It's ready to play out of the box.  
+No external modules nor libraries are used. It's ready to play out of the box.  
 
 ##Gameplay
 
