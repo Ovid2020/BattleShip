@@ -106,15 +106,14 @@ the ships placed:
 >     9  oo oo oo oo oo oo oo oo oo DE
 >     10 oo oo CR CR CR oo oo oo oo oo
 
-After player one finishes placing, he or she should look away and let player two begin placing. After placements are complete, there won't 
-be a need to keep looking away from the terminal. You'll both be attacking a public version of each other's boards. 
+After player one finishes placing, he or she should look away and let player two begin placing. After all placements for both players are complete, there won't be a need to keep looking away from the terminal. You'll both be attacking a public version of each other's boards. 
 
 ### Attacks
 
 Now that both players have privately assigned all the ships, it's time to begin the attack phase of the game. Player one will begin 
 attacking first, then player two goes, and you will keep switching back and forth till one of you has sunk all of the other player's ships. 
 
-Here's what player one will see, when the attack phase begins:
+Here's what you'll see when the attack phase begins:
 
 >      ~~~~~ BEGIN THE BATTLE ~~~~~
 >     
