@@ -1,13 +1,19 @@
 # CLI BattleShip
+>     
+>           ||
+>          ||||
+>     ___...||..._________
+>       o   o   o   o   /       
+>     ^~^^~^~^~^^~^~^~^^~^~^^~^~^~^^~~^^~^~^^~~~^^~~~~^~~~~~^~~~~^
 
-> All you need is a current installation of node. No external modules are used, so you don't need to run npm install. 
+Enjoy all the thrills of your favorite naval-themed boardgame from the comforts of your Node-equipped terminal! Battle a friend. Sink 
+those ships! 
 
 ## Table of Contents
 
 1. [Requirements](#requirements)
 1. [Installation](#installation)
 1. [Gameplay](#gameplay)
-> This is a two-player game that takes place in a single terminal. Take turns -- and don't peek!
    1. [Start the Game](#start-the-game)
    1. [Enter Names](#enter-names)
    1. [Ship Placement](#ship-placement) 
@@ -17,13 +23,29 @@
 - Node 0.10.x
 
 ##Installation
-> No external modules are used. No need to use npm install. 
+> No external modules nor libraries are used. It's ready to play out of the box.  
 
 ##Gameplay
 
+This is a two-player game that takes place in a single terminal. Take turns -- and don't peek!
+
 ###Starting the Game
 
-Type node index from within the root directory. 
+Type node index from within the root directory. Here's what you should see: 
+
+>            *         *                 *
+>        *                     *                    *
+>     *                   *             *       *
+>     
+>     
+>     
+>           ||
+>          ||||
+>     ___...||..._________
+>       o   o   o   o   /       Welcome to CLI Battleship!
+>     ^~^^~^~^~^^~^~^~^^~^~^^~^~^~^^~~^^~^~^^~~~^^~~~~^~~~~~^~~~~^
+>     
+>     Player one, enter your name:
 
 ###Enter Names
 
@@ -33,9 +55,9 @@ Player one goes first, player two goes second. Enter your name after the prompt 
 
 Player two -- look away! 
 
-Player one places all 5 ships, then player two does the same. The first thing you will see,
-when it's your turn to place, is your blank board, then the list of ships you can place on it. 
+Player one places all 5 ships, then player two does the same. 
 
+The first thing you will see, when it's your turn to place, is your blank board, then the list of ships you can place on it. 
 Here's an example: 
 
 >     Player One, begin your ship placements. Your current board is:
@@ -106,13 +128,13 @@ the ships placed:
 >     9  oo oo oo oo oo oo oo oo oo DE
 >     10 oo oo CR CR CR oo oo oo oo oo
 
-After player one finishes placing, he or she should look away and let player two begin placing. After placements are complete, there won't 
-be a need to keep looking away from the terminal. You'll both be attacking a public version of each other's boards. 
+After player one finishes placing, he or she should look away and let player two begin placing. After all placements are complete for both players, 
+there won't be a need to keep looking away from the terminal. You'll both be attacking a public version of each other's boards. 
 
 ### Attacks
 
-Now that both players have privately assigned all the ships, it's time to begin the attack phase of the game. Player one will begin 
-attacking first, then player two goes, and you will keep switching back and forth till one of you has sunk all of the other player's ships. 
+Now that both players have privately placed all the ships, it's time to begin the attack phase of the game. Player one will begin 
+attacking first, then player two goes. You will keep switching back and forth till one of you has sunk all of the other player's ships. 
 
 Here's what player one will see, when the attack phase begins:
 
@@ -139,10 +161,11 @@ Here's what player one will see, when the attack phase begins:
 
 The board here is player one's public board. When player one makes an attack at a point on this board, the game checks if the enemy has a ship
 located at that point in his or her private board. If there is a hit, then player one will see XX at the point on this public board, or will see --
-if it is a miss. If a player attacks a point that he or she has already attacked, or if the attack is invalid in formatting or goes out of bounds, 
-an error message will show, and this player can try again till a valid attack is made. 
+if it is a miss. If a player attacks a point that he or she has already attacked, or if the attack is invalidly formatted or goes out of bounds, 
+an error message will show. This player can try again till a valid attack is made. 
 
-For exampe, let's say player one enters 1,1, but player two does not have any ship there. Player one's public board will now be: 
+For example, let's say player one enters 1,1, but player two does not have a ship placed there. This is a miss. Player one's public board will 
+now be: 
 
 >         1  2  3  4  5  6  7  8  9  10
 >      1  -- oo oo oo oo oo oo oo oo oo
@@ -157,7 +180,7 @@ For exampe, let's say player one enters 1,1, but player two does not have any sh
 >      10 oo oo oo oo oo oo oo oo oo oo
 
 It will now be player two's turn. He or she will see his or her own public board, which, the first time around, will not have any marks on it. Player
-two will be prompted to attack. If he or she enters 1,1, and player one has a ship located there, then player two's public board will now be: 
+two will be prompted to attack. If he or she enters 1,1, and player one has a ship placed there, then player two's public board will now be: 
 
 >         1  2  3  4  5  6  7  8  9  10
 >      1  XX oo oo oo oo oo oo oo oo oo
@@ -187,7 +210,7 @@ player one's public board will now be:
 >      10 oo oo oo oo oo oo oo oo oo oo
 
 This sequence repeats till either player has hit every spot on the other player's private board that has a ship in it. For instance, taking the 
-complete example board for player one from above, player two's winning public board may look like: 
+complete board from above, player two's winning public board may look like: 
 
 >        1  2  3  4  5  6  7  8  9  10
 >     1  XX -- oo oo oo oo oo -- oo oo
@@ -202,7 +225,7 @@ complete example board for player one from above, player two's winning public bo
 >     10 oo oo XX XX XX oo oo oo oo --
 
 
-When either player has won, you'll see a game over prompt. The game will then end. To play again, type in node index and start again! 
+When either player has won, you'll see a game over prompt. The game will then end. Type in node index and start again! 
 
 Enjoy!
 
